@@ -1,0 +1,26 @@
+<div>
+  <nav class="sticky top-0 flex items-center justify-between w-full h-16 bg-slate-200 dark:bg-gray-800">
+    <div class="flex flex-wrap ml-4 sm:flex-nowrap gap-2">
+      <.button link_type="a" to="/modal" label="Link">Ouvrir</.button>
+      <.button>Sauver</.button>
+    </div>
+    <form>
+      <.field
+        type="switch"
+        value={true}
+        name="header"
+        label="Entète"
+        size="xs"
+        phx-change="has_entete_change"
+      />
+    </form>
+
+    <div class="flex justify-end gap-3 pr-4">
+      <.h3>Tableur</.h3>
+      <.color_scheme_switch />
+    </div>
+  </nav>
+  <%!-- lib/my_app_web/live/upload_live.html.heex --%>
+
+  <%!-- use phx-drop-target with the upload ref to enable file drag and drop --%>
+</div>

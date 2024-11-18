@@ -1,0 +1,89 @@
+<div class="flex flex-col h-full bg-white dark:bg-gray-800 p-2">
+
+<%= if @live_action == :modal do %>
+  <.modal max_width="lg" title="Ourvir un fichier" close_modal_target={@myself}>
+    <.p>Content</.p>
+
+   <form phx-submit="upload" phx-change="validate" phx-target={@myself}>
+      <.live_file_input upload={@uploads.file} class="" />
+      <.button type="submit" phx-target={@myself}>
+        Ouvrir
+      </.button>
+    </form>
+    <section phx-drop-target={@uploads.file.ref}>
+
+<%!-- render each file entry --%>
+<%= for entry <- @uploads.file.entries do %>
+  <article class="upload-entry">
+
+
+
+    <%!-- entry.progress will update automatically for in-flight entries --%>
+    <progress value={entry.progress} max="100"> <%= entry.progress %>% </progress>
+
+    <%!-- a regular click event whose handler will invoke Phoenix.LiveView.cancel_upload/3 --%>
+    <button type="button" phx-click="cancel-upload" phx-value-ref={entry.ref} aria-label="cancel">&times;</button>
+
+    <%!-- Phoenix.Component.upload_errors/2 returns a list of error atoms --%>
+    <%= for err <- upload_errors(@uploads.file, entry) do %>
+      <p class="alert alert-danger"><%= error_to_string(err) %></p>
+    <% end %>
+
+  </article>
+<% end %>
+
+<%!-- Phoenix.Component.upload_errors/1 returns a list of error atoms --%>
+<%= for err <- upload_errors(@uploads.file) do %>
+  <p class="alert alert-danger"><%= error_to_string(err) %></p>
+<% end %>
+
+</section>
+    <div class="flex justify-end">
+      <.button label="close" link_type="a" to="/" label="Fermer"/>
+    </div>
+  </.modal>
+<% end %>
+
+   
+  <div class="flex items-center justify-between  border-b dark:border-gray-700 bg-gray-50 dark:bg-gray-900">
+    <div class="flex space-x-2 overflow-x-auto">
+      <%= for tab <- @tabs do %>
+        <button
+          phx-click="switch_tab"
+          phx-target={@myself}
+          phx-value-id={tab.id}
+          class={"px-4 py-2 text-sm font-medium rounded-t-lg transition-colors duration-200 
+            #{if tab.id == @active_tab, do: 
+              "bg-blue-500 text-white hover:bg-blue-600", 
+              else: "text-gray-600  dark:text-gray-300 dark:hover:bg-gray-700 hover:bg-blue-600 hover:text-white"
+            }"
+          }
+        >
+          <%= tab.name %>
+        </button>
+      <% end %>
+    </div>
+    <button
+      phx-click="add_tab"
+      phx-target={@myself}
+      class="px-3 py-1 text-sm font-medium text-white bg-green-500 rounded-full hover:bg-green-600 transition-colors duration-200"
+    >
+      +
+    </button>
+  </div>
+
+  <div class="flex-grow overflow-auto" style="max-height: calc(100vh - 132px);">
+    <div class="inline-block min-w-full align-middle">
+      <%= for {tab, tab_index} <- Enum.with_index(@tabs) do %>
+        <div class={(tab_index == @active_tab && "block") || "hidden"}>
+          <.live_component
+            module={TableurWeb.SheetComponent}
+            id={"sheet#{tab_index}"}
+            data={@file_content}
+            has_header={@has_header}
+          />
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>

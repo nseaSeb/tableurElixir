@@ -1,0 +1,144 @@
+<div class="max-h-full relative">
+
+  <%= if @data != [] do %>
+            <% col_count = length(hd(@data)) %>
+            <% row_count = length(@data) %>
+            <%= "Nombre de colonnes: #{col_count}, nombre de lignes: #{row_count}" %>
+    <table class="min-w-full divide border-separate rounded divide-gray-200 dark:divide-gray-700">
+      <thead class="bg-gray-300 dark:bg-black sticky top-0" style="z-index: 20;">
+        <tr class="sticky tr-container">
+          <!-- Première colonne pour les index des lignes -->
+          <th
+            class="sticky outline-2 outline outline-white dark:outline-slate-700 left-0 px-6 py-3 text-left text-xs font-bold  uppercase tracking-wider sticky top-0 bg-gray-200 dark:bg-black dark:text-gray-300"
+            style="z-index: 30;"
+          >
+          </th>
+          <!-- Générer dynamiquement les colonnes -->
+        
+            <%= for col <- 1..col_count do %>
+              <th
+                scope="col"
+                class="pl-2 outline-2 outline outline-white dark:outline-slate-700  text-left text-xs font-bold text-gray-500 uppercase tracking-wider sticky top-0 bg-gray-300 dark:bg-black dark:text-gray-400 hover:text-white dark:hover:text-white dark:hover:bg-blue-600 hover:bg-blue-600 cursor-pointer"
+                style="z-index: 20;"
+              >
+                <div class="flex justify-between h-8 items-center relative ">
+                  <%= number_to_letter(col) %>
+
+                  <div class="relative" style="z-index: 40;">
+                    <.dropdown
+                      placement={if col < col_count / 2, do: "right", else: "left"}
+                      class="menu-table_top"
+                    >
+                      <.dropdown_menu_item
+                        class="top-8"
+                        label="Supprimer"
+                        value={col}
+                        phx-click="delete_col"
+                        phx-target={@myself}
+                      />
+                    </.dropdown>
+                  </div>
+                </div>
+              </th>
+            <% end %>
+        
+          <th
+            class="sticky right-0 top-0 btn-rounded text-center rounded text-xs font-bold text-white uppercase cursor-pointer bg-blue-500 hover:bg-blue-600"
+            phx-target={@myself}
+            phx-click="add_col"
+            style="z-index: 30;"
+          >
+            +
+          </th>
+        </tr>
+      </thead>
+
+    <tbody class="bg-white divide-y divide-gray-200 dark:bg-gray-800 dark:divide-gray-700" style="z-index: 10;">
+  <%= for {row, row_index} <- Enum.with_index(@data) do %>
+    <tr
+      class={if @has_header and row_index == 0, do: "font-black sticky top-12", else: ""}
+      style={if @has_header and row_index == 0, do: "z-index: 15;", else: ""}
+    >
+      <!-- Colonne d'index -->
+      <td class="sticky outline-2 outline outline-white dark:outline-slate-700 left-0 px-1 py-1 w-10 text-right text-xs font-bold text-gray-500 uppercase bg-gray-300 dark:bg-black dark:text-gray-400 hover:text-white dark:hover:text-white dark:hover:bg-blue-600 hover:bg-blue-600 cursor-pointer">
+        <div class="flex items-center">
+          <div id={"menu-#{row_index}"} phx-hook="DropdownHook" data-row-index={row_index} class="relative">
+            <button data-dropdown-trigger class="w-8 h-8 flex items-center justify-center hover:bg-blue-600 hover:text-white rounded-full transition-colors">
+              <.icon name="hero-ellipsis-vertical" class="text-gray-700 dark:text-gray-300 h-4" />
+              <%= row_index %>
+            </button>
+          </div>
+        </div>
+      </td>
+
+      <!-- Cellules de la ligne -->
+      <%= for {cell, _col_index} <- Enum.with_index(row) do %>
+        <td class="whitespace-nowrap text-sm text-gray-500 dark:text-gray-400 hover:bg-gray-300 dark:hover:bg-gray-700 cursor-pointer">
+          <input
+            value={cell}
+            class="min-w-full px-4 py-2 focus:font-bold bg-transparent whitespace-nowrap text-sm text-gray-500 dark:text-gray-400 hover:bg-gray-300 dark:hover:bg-gray-700 cursor-pointer"
+          />
+        </td>
+      <% end %>
+    </tr>
+  <% end %>
+
+  <!-- Bouton Ajouter une Ligne -->
+  <tr class="tr-container">
+    <td
+      class="sticky left-0 bottom-0 btn-rounded text-center rounded text-xs font-bold text-white uppercase cursor-pointer bg-blue-500 hover:bg-blue-600"
+      phx-target={@myself}
+      phx-click="add_row"
+      style="z-index: 25;"
+    >
+      +
+    </td>
+  </tr>
+</tbody>
+
+    </table>
+  <% end %>
+         <%= for {row, row_index} <- Enum.with_index(@data) do %>
+
+ 
+    <div
+      id={"menu#{row_index}"}
+      class="dropdown-menu w-56 fixed bg-white dark:bg-gray-800 shadow-lg rounded-md py-1 min-w-[150px] z-50 hidden"
+    >
+      <button
+        class="w-full px-4 py-2 text-left text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700"
+        phx-click="delete_row"
+        phx-value-row={row_index}
+        phx-target={@myself}
+      >
+        Supprimer
+      </button>
+      <button
+        class="w-full px-4 py-2 text-left text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700"
+        phx-click="duplicate_row"
+        phx-value-row={row_index}
+        phx-target={@myself}
+      >
+        Dupliquer
+      </button>
+      <button
+        class="w-full px-4 py-2 text-left text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700"
+        phx-click="insert_row_before"
+        phx-value-row={row_index}
+        phx-target={@myself}
+      >
+        Insérer une ligne avant
+      </button>
+      <button
+        class="w-full px-4 py-2 text-left text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700"
+        phx-click="insert_row_after"
+        phx-value-row={row_index}
+        phx-target={@myself}
+      >
+        Insérer une ligne après
+      </button>
+    </div>
+    <% end %>
+
+
+</div>

@@ -1,10 +1,10 @@
-@import "tailwindcss/base";
-@import "../../deps/petal_components/assets/default.css";
-@import "tailwindcss/components";
-@import "tailwindcss/utilities";
+@import 'tailwindcss/base';
+@import '../../deps/petal_components/assets/default.css';
+@import 'tailwindcss/components';
+@import 'tailwindcss/utilities';
 
 @layer base {
-  /* Add base styles here (eg. styles that are the defaults for common elements)
+    /* Add base styles here (eg. styles that are the defaults for common elements)
 
     Example base style:
     h1 {
@@ -12,10 +12,91 @@
     }
 
   */
+
+    body {
+        --sb-track-color: rgba(10, 10, 10, 0.1);
+        --sb-thumb-color: #7967fd;
+        --sb-size: 10px;
+    }
+
+    body::-webkit-scrollbar {
+        width: var(--sb-size);
+    }
+
+    body::-webkit-scrollbar-track {
+        background: var(--sb-track-color);
+        border-radius: 6px;
+    }
+
+    body::-webkit-scrollbar-thumb {
+        background: var(--sb-thumb-color);
+        border-radius: 6px;
+        border: 1px solid #15172d;
+    }
+
+    @supports not selector(::-webkit-scrollbar) {
+        body {
+            scrollbar-color: var(--sb-thumb-color) var(--sb-track-color);
+        }
+    }
+    body {
+        scrollbar-color: var(--sb-thumb-color) var(--sb-track-color);
+        scrollbar-width: var(--sb-size);
+        scroll-behavior: smooth;
+    }
+    input[type='file']::file-selector-button {
+        @apply pc-button pc-button--primary pc-button--md;
+    }
+
+    input[type='file']::file-selector-button:hover {
+        @apply bg-blue-700;
+    }
+    input[type='file'] {
+        @apply text-black dark:text-white text-xs;
+    }
+    input {
+        width: inherit;
+    }
+    tr {
+        @apply dark:bg-slate-900 bg-cyan-50;
+    }
+    tr:nth-child(odd) {
+        @apply dark:bg-slate-950 bg-cyan-100;
+    }
+
+    :is(.dark .tr-container) {
+        background-color: rgb(31 41 55) !important;
+    }
+    .tr-container {
+        background-color: white !important;
+    }
+    .pc-dropdown__trigger-button--no-label:focus {
+        box-shadow: none !important;
+    }
+    .menu-table_top {
+        .pc-dropdown__menu-items-wrapper {
+            top: 32px;
+        }
+    }
+    .btn-rounded {
+        min-width: 46px;
+        min-height: 46px;
+        width: 46px;
+        height: 46px;
+        border-radius: 100% !important;
+        /* z-index: 9999; */
+        opacity: 0;
+    }
+    .btn-rounded:hover {
+        opacity: 1;
+    }
+    /* .pc-dropdown__menu-items-wrapper-placement--right {
+        position: sticky !important;
+    } */
 }
 
 @layer components {
-  /* Add component styles here (eg. buttons or tabs or anything that uses a number of styles)
+    /* Add component styles here (eg. buttons or tabs or anything that uses a number of styles)
 
     Example change button styles:
 
@@ -29,18 +110,18 @@
 }
 
 @layer utilities {
-  /* LiveView specific classes for your customization */
-  .phx-no-feedback.invalid-feedback,
-  .phx-no-feedback .invalid-feedback {
-    display: none;
-  }
+    /* LiveView specific classes for your customization */
+    .phx-no-feedback.invalid-feedback,
+    .phx-no-feedback .invalid-feedback {
+        display: none;
+    }
 
-  .phx-click-loading {
-    opacity: 0.5;
-    transition: opacity 1s ease-out;
-  }
+    .phx-click-loading {
+        opacity: 0.5;
+        transition: opacity 1s ease-out;
+    }
 
-  .phx-loading{
-    cursor: wait;
-  }
+    .phx-loading {
+        cursor: wait;
+    }
 }
